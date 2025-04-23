@@ -11,4 +11,14 @@ class ChatController extends Controller
     {
         return view('chat.index');
     }
+
+    public function chats()
+    {
+
+    }
+
+    public function messages()
+    {
+
+    }
 }
