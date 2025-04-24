@@ -6,17 +6,27 @@ defineProps({
         type: Array,
         required: true,
     },
-})
+    currentChat: {
+        type: Object,
+        required: true,
+    },
+});
+
+defineEmits({
+    select: null,
+});
 </script>
 
 <template>
     <div>
         <div
             v-for="chat in chats"
-            class="px-2 first:pt-2 last:pb-2 h-18"
+            class="m-2 h-18"
         >
             <ChatItem
                 :chat="chat"
+                :highlight="currentChat.id === chat.id"
+                @click="$emit('select', chat)"
             />
         </div>
     </div>
