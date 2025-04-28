@@ -16,10 +16,9 @@ class ChatListController extends Controller
      */
     public function __invoke(Request $request): ResourceCollection
     {
-        return User::query()
+        return UserResource::collection(User::query()
             ->with('media')
             ->whereKeyNot(auth()->id())
-            ->get()
-            ->toResourceCollection(UserResource::class);
+            ->cursorPaginate(15));
     }
 }

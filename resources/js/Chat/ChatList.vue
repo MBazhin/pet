@@ -1,37 +1,62 @@
 <script setup>
 import ChatItem from "@/Chat/ChatItem.vue";
+import {vInfiniteScroll} from '@vueuse/components'
+import {useChats} from "@/Chat/Composables/chats.js";
+import {onMounted} from "vue";
 
-defineProps({
-    chats: {
-        type: Array,
-        required: true,
-    },
-    currentChat: {
-        type: Object,
-        required: true,
-    },
-});
+const {chats, selectedChat, initialLoadingCompleted, canLoadMoreChats, busy, loadChats, selectChat} = useChats();
 
-defineEmits({
-    select: null,
+onMounted(() => {
+    loadChats();
 });
 </script>
 
 <template>
-    <div>
-        <div
-            v-for="chat in chats"
-            class="m-2 h-18"
-        >
+    <div
+        class="bg-white rounded-l-xl
+               border border-gray-200
+               overflow-y-auto overflow-x-hidden
+               flex flex-col gap-2 p-2"
+        :class="{'overflow-y-hidden': !initialLoadingCompleted}"
+        v-infinite-scroll="[
+            loadChats,
+            { distance: 175, canLoadMore: () => canLoadMoreChats && !busy }
+        ]"
+    >
+        <template v-if="initialLoadingCompleted">
+            <TransitionGroup>
+                <ChatItem
+                    v-for="(chat, index) in chats" :key="index"
+                    :chat="chat"
+                    :highlight="selectedChat.id === chat.id"
+                    @click="selectChat(chat)"
+                />
+            </TransitionGroup>
             <ChatItem
-                :chat="chat"
-                :highlight="currentChat.id === chat.id"
-                @click="$emit('select', chat)"
+                v-if="canLoadMoreChats"
+                skeleton
+                :chat="{}"
             />
-        </div>
+        </template>
+        <template v-else>
+            <ChatItem
+                v-for="n in 15" :key="n"
+                skeleton
+                :chat="{}"
+            />
+        </template>
     </div>
 </template>
 
 <style scoped>
+    .v-enter-active,
+    .v-leave-active {
+        transition: all 0.75s ease;
+    }
 
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
 </style>
