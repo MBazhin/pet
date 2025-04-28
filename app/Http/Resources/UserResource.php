@@ -17,9 +17,7 @@ class UserResource extends JsonResource
     {
         /** @var User $this */
         return [
-            ...$this->only('id', 'name', 'email'),
-            'avatar' => $this->getFirstMediaUrl('avatar'),
-            'avatar_thumb' => $this->getFirstMediaUrl('avatar', 'thumb'),
+            ...$this->only('id', 'name', 'email', 'avatar', 'avatar_thumb'),
         ];
     }
 }

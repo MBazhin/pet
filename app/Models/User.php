@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Traits\HasAvatar;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,10 +21,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, InteractsWithMedia;
-
-    const AVATAR_MEDIA_COLLECTION = 'avatar';
-    const THUMB_MEDIA_CONVERSIONS_NAME = 'thumb';
+    use HasFactory, Notifiable, InteractsWithMedia, HasAvatar {
+        HasAvatar::registerMediaCollections insteadof InteractsWithMedia;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -58,21 +58,5 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection(self::AVATAR_MEDIA_COLLECTION)
-            ->useFallbackUrl('/default_avatar.jpg')
-            ->useFallbackUrl('/default_avatar_thumb.jpg', self::THUMB_MEDIA_CONVERSIONS_NAME)
-            ->useFallbackPath(public_path('/default_avatar.jpg'))
-            ->useFallbackPath(public_path('/default_avatar_thumb.jpg'), self::THUMB_MEDIA_CONVERSIONS_NAME)
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png'])
-            ->registerMediaConversions(fn () => $this
-                ->addMediaConversion(self::THUMB_MEDIA_CONVERSIONS_NAME)
-                ->width(50)
-                ->height(50)
-            );
     }
 }
