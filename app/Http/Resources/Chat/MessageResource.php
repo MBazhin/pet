@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Chat;
 
-use App\Models\User;
+use App\Models\Chat\Message;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class MessageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,9 +15,7 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        /** @var User $this */
-        return [
-            ...$this->only('id', 'name', 'email', 'avatar', 'avatar_thumb'),
-        ];
+        /** @var Message $this */
+        return $this->only('id', 'sender_id', 'text', 'created_at');
     }
 }

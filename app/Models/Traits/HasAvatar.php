@@ -5,38 +5,13 @@ namespace App\Models\Traits;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
- * @property string avatar
- * @property string avatar_thumb
+ * @property ?string avatar
+ * @property ?string avatar_thumb
  */
 trait HasAvatar
 {
     protected const AVATAR_MEDIA_COLLECTION = 'avatar';
     protected const THUMB_MEDIA_CONVERSIONS_NAME = 'thumb';
-
-    protected function avatar(): Attribute
-    {
-        return Attribute::get(fn () => !empty($avatar = $this->getFirstMediaUrl('avatar'))
-            ? $avatar
-            : route('avatar_generator', [
-                'modelId' => $this->id,
-                'modelClass' => $this::class,
-                'field' => 'name'
-            ])
-        );
-    }
-
-    protected function avatarThumb(): Attribute
-    {
-        return Attribute::get(fn () => !empty($avatarThumb = $this->getFirstMediaUrl('avatar', 'thumb'))
-            ? $avatarThumb
-            : route('avatar_generator', [
-                'modelId' => $this->id,
-                'modelClass' => $this::class,
-                'field' => 'name',
-                'thumb' => true
-            ])
-        );
-    }
 
     public function registerMediaCollections(): void
     {
@@ -48,5 +23,35 @@ trait HasAvatar
                 ->width(50)
                 ->height(50)
             );
+    }
+
+    protected function avatar(): Attribute
+    {
+        return Attribute::get(fn () => !empty($avatar = $this->getFirstMediaUrl('avatar'))
+            ? $avatar
+            : ($this->shouldGenerateAvatar() ? route('avatar_generator', [
+                'modelId' => $this->id,
+                'modelClass' => $this::class,
+                'field' => 'name'
+            ]) : null)
+        );
+    }
+
+    protected function avatarThumb(): Attribute
+    {
+        return Attribute::get(fn () => !empty($avatarThumb = $this->getFirstMediaUrl('avatar', 'thumb'))
+            ? $avatarThumb
+            : ($this->shouldGenerateAvatar() ? route('avatar_generator', [
+                'modelId' => $this->id,
+                'modelClass' => $this::class,
+                'field' => 'name',
+                'thumb' => true
+            ]) : null)
+        );
+    }
+
+    protected function shouldGenerateAvatar(): bool
+    {
+        return true;
     }
 }
