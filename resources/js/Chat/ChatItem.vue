@@ -1,4 +1,6 @@
 <script setup>
+import moment from 'moment';
+
 defineProps({
     chat: {
         type: Object,
@@ -28,18 +30,27 @@ defineProps({
             alt="Аватар"
         />
 
-        <div
-            v-if="skeleton"
-            class="h-4.5 bg-gray-200 rounded-full grow-1 max-w-56"
-        />
-        <div
-            v-else
-            class="flex flex-column"
-        >
-            <span class="text-gray-700">{{ chat.name }}</span>
+        <div class="grow-1 flex flex-col" :class="{'gap-2': skeleton}">
+            <template v-if="skeleton">
+                <div class="h-4.5 bg-gray-200 rounded-full max-w-56"/>
+
+                <div class="h-3.5 bg-gray-200 rounded-full"/>
+            </template>
+            <template v-else>
+                <span class="text-gray-700 text-base font-medium"
+                >{{ chat.name }}</span>
+
+                <div v-if="chat.last_message" class="flex justify-between items-baseline">
+                    <span class="text-gray-700 text-sm break-all line-clamp-1"
+                    >{{ chat.last_message.text }}</span>
+
+                    <span class="text-gray-700 text-xs whitespace-nowrap"
+                    >{{ moment(chat.last_message.created_at).format('H:mm') }}</span>
+                </div>
+            </template>
         </div>
 
-        <span v-if="skeleton" class="sr-only">Загрузка чатов...</span>
+        <span v-if="skeleton" class="sr-only">Загрузка чата...</span>
     </div>
 </template>
 
