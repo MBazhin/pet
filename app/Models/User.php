@@ -64,6 +64,6 @@ class User extends Authenticatable implements HasMedia
 
     public function chats(): BelongsToMany
     {
-        return $this->belongsToMany(Chat::class);
+        return $this->belongsToMany(Chat::class)->withTimestamps();
     }
 }
