@@ -31,7 +31,7 @@ class ChatListController extends Controller
                 ->withMax('messages as last_message_id', 'id')
                 ->with('lastMessage:id,sender_id,text,created_at')
                 ->latest('last_message_id')
-                ->latest('id')
+                ->latest('chats.id')
                 ->cursorPaginate(15)
         );
     }

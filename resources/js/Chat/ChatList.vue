@@ -1,10 +1,12 @@
 <script setup>
 import ChatItem from "@/Chat/ChatItem.vue";
-import {vInfiniteScroll} from '@vueuse/components'
+import {vInfiniteScroll} from '@vueuse/components';
 import {useChats} from "@/Chat/Composables/chats.js";
 import {onMounted} from "vue";
 
-const {chats, selectedChat, initialLoadingCompleted, canLoadMoreChats, busy, loadChats, selectChat} = useChats();
+const {
+    chats, selectedChat, initialLoadingCompleted, canLoadMoreChats, isChatsLoading, loadChats, selectChat
+} = useChats();
 
 onMounted(() => {
     loadChats();
@@ -20,20 +22,21 @@ onMounted(() => {
         :class="{'overflow-y-hidden': !initialLoadingCompleted}"
         v-infinite-scroll="[
             loadChats,
-            { distance: 175, canLoadMore: () => canLoadMoreChats && !busy }
+            { interval: 2000, distance: 175, canLoadMore: () => canLoadMoreChats }
         ]"
     >
         <template v-if="initialLoadingCompleted">
             <TransitionGroup>
                 <ChatItem
-                    v-for="(chat, index) in chats" :key="index"
+                    v-for="(chat, index) in chats"
+                    :key="index"
                     :chat="chat"
                     :highlight="selectedChat.id === chat.id"
                     @click="selectChat(chat)"
                 />
             </TransitionGroup>
             <ChatItem
-                v-if="canLoadMoreChats"
+                v-if="isChatsLoading"
                 skeleton
                 :chat="{}"
             />
