@@ -1,5 +1,7 @@
 <script setup>
 import moment from 'moment';
+import Name from "@/Chat/User/Name.vue";
+import CircleAvatar from "@/Chat/User/CircleAvatar.vue";
 
 defineProps({
     chat: {
@@ -13,7 +15,7 @@ defineProps({
 
 <template>
     <div
-        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center"
+        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center transition-colors"
         :class="[
             highlight ? 'bg-gray-200' : 'hover:bg-gray-100',
             { 'animate-pulse hover:bg-inherit !cursor-default': skeleton }
@@ -23,10 +25,9 @@ defineProps({
             v-if="skeleton"
             class="w-[50px] h-[50px] rounded-full bg-gray-200 shrink-0"
         />
-        <img
+        <CircleAvatar
             v-else
             :src="chat.avatar_thumb"
-            class="w-[50px] h-[50px] rounded-full shrink-0"
             alt="Аватар"
         />
 
@@ -37,8 +38,7 @@ defineProps({
                 <div class="h-3.5 bg-gray-200 rounded-full"/>
             </template>
             <template v-else>
-                <span class="text-gray-700 text-base font-medium"
-                >{{ chat.name }}</span>
+                <Name :name="chat.name"/>
 
                 <div v-if="chat.last_message" class="flex justify-between items-baseline">
                     <span class="text-gray-700 text-sm break-all line-clamp-1"

@@ -11,6 +11,7 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('chat')
     ->name('chat.')
+    ->middleware('auth:sanctum')
     ->group(function () {
        Route::get('/', ChatListController::class)->name('chat_list');
        Route::get('/{chat}/messages', FetchMessagesController::class)->name('fetch_messages');

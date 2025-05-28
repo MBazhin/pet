@@ -17,7 +17,7 @@ class ChatListController extends Controller
     public function __invoke(Request $request): ResourceCollection
     {
         /** @var User $user */
-        $user = auth()->user() ?? User::query()->first(); //todo временно
+        $user = auth()->user();
 
         return ChatResource::collection(
             $user

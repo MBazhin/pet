@@ -4,7 +4,7 @@ import MessagesWindow from "@/Chat/Messages/MessagesWindow.vue";
 </script>
 
 <template>
-    <div class="grid grid-cols-12 gap-3 h-full p-3">
+    <div class="h-[calc(100vh-calc(var(--spacing)*16))] grid grid-cols-12 gap-2 p-2">
         <ChatList
             class="col-span-3 sm:col-span-2 lg:col-span-4"
         />

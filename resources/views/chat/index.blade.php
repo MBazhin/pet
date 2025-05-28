@@ -1,3 +1,5 @@
+@php use App\Http\Resources\Chat\UserResource;@endphp
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -9,6 +11,9 @@
     @vite(['resources/css/Chat/app.css', 'resources/js/Chat/app.js'])
 </head>
 <body>
-    <div id="app"></div>
+    <div
+        id="app"
+        data-auth="{{ UserResource::make(auth()->user())->toJson() }}"
+    ></div>
 </body>
 </html>
