@@ -4,17 +4,22 @@ import {computed, onActivated, onMounted, onUpdated} from "vue";
 import MessageItem from "@/Chat/Messages/MessageItem.vue";
 import {useInfiniteScroll} from "@/Chat/Composables/infiniteScroll.js";
 import {templateRef, useScroll} from "@vueuse/core";
+import {useAuth} from "@/Chat/Composables/auth.js";
 
 const offset = 375;
+const messageContainer = templateRef('messageContainer');
 
+const {user} = useAuth();
 const {chat} = defineProps({
     chat: {
         type: Object,
         required: true,
     },
 })
-
-const messageContainer = templateRef('messageContainer');
+const keyedChatUsers = computed(() => chat.users.reduce((acc, user) => {
+    acc[user.id] = user;
+    return acc;
+}, {[user.value.id]: user.value}));
 
 const {
     messages, canLoadMoreMessagesForward, canLoadMoreMessagesBackward, loadMessagesForward, loadMessagesBackward
@@ -32,15 +37,6 @@ useInfiniteScroll(messageContainer, {directions: {
         onLoadMore: loadMessagesBackward,
     },
 }, directionType: 'reversed', interval: 1000, offset: {top: offset, bottom: offset}});
-
-const keyedChatUsers = computed(() => chat.users.reduce((acc, user) => {
-    acc[user.id] = user;
-    return acc;
-}, {1: {
-    id: 1,
-    name: 'Тестовый пользователь',
-    avatar_thumb: 'http://localhost/media/11/conversions/wUP9sV3oy0FqDoThAQh3FNsLFU6Ti00UjqK2gKZ6-thumb.jpg'
-}}));
 
 onMounted(() => {
     loadMessagesForward();

@@ -9,6 +9,7 @@ import MessagesWindow from "@/Chat/Messages/MessagesWindow.vue";
             class="col-span-3 sm:col-span-2 lg:col-span-4"
         />
         <MessagesWindow
+            prefetch
             class="col-span-9 sm:col-span-10 lg:col-span-8"
         />
     </div>

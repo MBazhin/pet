@@ -15,8 +15,10 @@ const {
 } = useInfiniteAxiosViaLaravelCursor(apiUrl);
 
 const selectChat = (chat) => selectedChat.value = selectedChat.value.id === chat.id
-    ? defaultChat()
+    ? unselectChat()
     : chat;
+
+const unselectChat = () => selectedChat.value = defaultChat();
 
 export function useChats() {
     return {
@@ -27,5 +29,6 @@ export function useChats() {
         initialLoadingCompleted,
         loadChats,
         selectChat,
+        unselectChat,
     }
 }
