@@ -1,6 +1,6 @@
 <script setup>
 import ChatItem from "@/Chat/ChatItem.vue";
-import {vInfiniteScroll} from '@vueuse/components';
+import {vInfiniteScroll} from "@/Chat/Composables/infiniteScroll.js";
 import {useChats} from "@/Chat/Composables/chats.js";
 import {onMounted} from "vue";
 
@@ -20,10 +20,9 @@ onMounted(() => {
                overflow-y-auto overflow-x-hidden
                flex flex-col gap-2 p-2"
         :class="{'overflow-y-hidden': !initialLoadingCompleted}"
-        v-infinite-scroll="[
-            loadChats,
-            { interval: 2000, distance: 175, canLoadMore: () => canLoadMoreChats }
-        ]"
+        v-infinite-scroll="{
+            canLoadMore: () => canLoadMoreChats, onLoadMore: loadChats, interval: 2000, offset: {bottom: 100}
+        }"
     >
         <template v-if="initialLoadingCompleted">
             <TransitionGroup>

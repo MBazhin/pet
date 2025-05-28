@@ -14,6 +14,8 @@ class GenerateAvatarForModelController extends Controller
 
         $valueForAvatar = $model->query()->findOrFail($modelId)->{$field};
 
+        // todo кеширование
+
         $avatarSvg = \Avatar::create($valueForAvatar)
             ->setFontFamily('Segoe UI')
             ->toSvg();
