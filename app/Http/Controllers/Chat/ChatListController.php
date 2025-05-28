@@ -22,14 +22,14 @@ class ChatListController extends Controller
         return ChatResource::collection(
             $user
                 ->chats()
+                ->withMax('messages as last_message_id', 'id')
                 ->with([
                     'users' => fn ($query) => $query
                         ->whereKeyNot($user)
                         ->select('users.id', 'users.name'),
-                    'users.media'
+                    'users.media',
+                    'lastMessage'
                 ])
-                ->withMax('messages as last_message_id', 'id')
-                ->with('lastMessage:id,sender_id,text,created_at')
                 ->latest('last_message_id')
                 ->latest('chats.id')
                 ->cursorPaginate(15)

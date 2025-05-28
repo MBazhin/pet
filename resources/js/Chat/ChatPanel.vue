@@ -1,6 +1,6 @@
 <script setup>
 import ChatList from "@/Chat/ChatList.vue";
-import MessagesWindow from "@/Chat/MessagesWindow.vue";
+import MessagesWindow from "@/Chat/Messages/MessagesWindow.vue";
 </script>
 
 <template>

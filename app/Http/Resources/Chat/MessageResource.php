@@ -16,6 +16,6 @@ class MessageResource extends JsonResource
     public function toArray(Request $request): array
     {
         /** @var Message $this */
-        return $this->only('id', 'sender_id', 'text', 'created_at');
+        return $this->only('id', 'sender_id', 'text', 'created_at', 'updated_at');
     }
 }
