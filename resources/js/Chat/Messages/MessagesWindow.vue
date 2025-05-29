@@ -40,8 +40,8 @@ watch(currentChatForChatMessagesComponent, (currentChat) => {
 
 <template>
     <div
-        class="bg-white rounded-r-xl border border-gray-200 overflow-y-auto overflow-x-hidden"
-        :class="{'overflow-y-hidden': !selectedChat.id}"
+        class="rounded-r-xl border border-gray-200 overflow-y-auto overflow-x-hidden"
+        :class="{'bg-white overflow-y-hidden': !selectedChat.id}"
     >
         <div
             v-show="!selectedChat.id"

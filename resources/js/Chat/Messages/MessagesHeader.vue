@@ -8,7 +8,7 @@ const {chat} = defineProps({
 </script>
 
 <template>
-    <div class="bg-white shadow-lg h-20 rounded-r-lg w-full p-2 overflow-hidden">
+    <div class="bg-white shadow-lg h-20 rounded-tr-lg w-full p-2 overflow-hidden">
         {{ chat }}
     </div>
 </template>

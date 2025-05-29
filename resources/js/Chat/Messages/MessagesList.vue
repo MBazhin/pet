@@ -54,13 +54,13 @@ onUpdated(() => {
 <template>
     <div
         ref="messageContainer"
-        class="h-full p-2 flex flex-col-reverse overflow-y-auto"
+        class="h-full flex flex-col-reverse overflow-y-auto py-1.5 pr-2"
     >
         <MessageItem
-            v-for="message in messages"
+            v-for="(message, index) in messages"
             :message="message"
             :user="keyedChatUsers[message.sender_id]"
-            class="border-t last:border-t-0"
+            :is-last-sender-message="message.sender_id !== messages[index + 1]?.sender_id"
         />
     </div>
 </template>
