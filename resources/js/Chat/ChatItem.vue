@@ -1,7 +1,7 @@
 <script setup>
-import moment from 'moment';
 import Name from "@/Chat/User/Name.vue";
 import CircleAvatar from "@/Chat/User/CircleAvatar.vue";
+import MessageTime from "@/Chat/Messages/MessageTime.vue";
 
 defineProps({
     chat: {
@@ -45,8 +45,7 @@ defineProps({
                     <span class="text-gray-700 text-sm break-all line-clamp-1"
                     >{{ chat.last_message.text }}</span>
 
-                    <span class="text-gray-700 text-xs whitespace-nowrap"
-                    >{{ moment(chat.last_message.created_at).format('H:mm') }}</span>
+                    <MessageTime :time="chat.last_message.created_at"/>
                 </div>
             </template>
         </div>

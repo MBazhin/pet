@@ -1,5 +1,6 @@
 <script setup>
 import CircleAvatar from "@/Chat/User/CircleAvatar.vue";
+import MessageTime from "@/Chat/Messages/MessageTime.vue";
 
 const {message} = defineProps({
     message: {
@@ -29,7 +30,11 @@ const {message} = defineProps({
             :class="{'invisible': !isLastSenderMessage}"
         />
         <div class="p-2 bg-white border-gray-300 rounded-lg cursor-default">
-            {{ message.text }}
+            <div class="flex justify-between items-end">
+                <span>{{ message.text }}</span>
+
+                <MessageTime :time="message.created_at"/>
+            </div>
         </div>
     </div>
 </template>
