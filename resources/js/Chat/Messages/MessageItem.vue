@@ -18,7 +18,10 @@ const {message} = defineProps({
 </script>
 
 <template>
-    <div class="p-1.5 pl-2 flex gap-2 hover:bg-gray-300 rounded-lg">
+    <div
+        tabindex="0"
+        class="p-1.5 pl-2 flex gap-2 hover:bg-gray-300 rounded-lg focus:outline-0 focus:bg-gray-300"
+    >
         <CircleAvatar
             :src="user.avatar_thumb"
             :alt="user.name"

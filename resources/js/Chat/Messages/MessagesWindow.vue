@@ -1,10 +1,9 @@
 <script setup>
 import MessagesHeader from "@/Chat/Messages/MessagesHeader.vue";
-import MessageInput from "@/Chat/Messages/MessageInput.vue";
-import MessagesList from "@/Chat/Messages/MessagesList.vue";
 import {useChats} from "@/Chat/Composables/chats.js";
 import {computed, nextTick, ref, shallowRef, watch} from "vue";
 import defaultChat from "@/Chat/Composables/Defaults/chat.js";
+import MessagesBody from "@/Chat/Messages/MessagesBody.vue";
 
 const {prefetch} = defineProps({
     prefetch: Boolean,
@@ -12,55 +11,57 @@ const {prefetch} = defineProps({
 
 const {initialLoadingCompleted, chats, selectedChat} = useChats();
 
-const currentChatForChatMessagesComponent = ref(defaultChat());
-const chatMessagesComponents = shallowRef({});
-const currentChatMessagesComponent = computed(() =>
-    chatMessagesComponents.value[currentChatForChatMessagesComponent.value.id]);
+const currentChatForMessagesBodyComponent = ref(defaultChat());
+const messagesBodyComponents = shallowRef({});
+const currentMessagesBodyComponent = computed(() =>
+    messagesBodyComponents.value[currentChatForMessagesBodyComponent.value.id]);
 
 if (prefetch) {
     const PREFETCH_MESSAGES_FOR_FIRST_CHATS_COUNT = 5;
 
     watch(initialLoadingCompleted, async () => {
         for (const chat of chats.value.slice(0, PREFETCH_MESSAGES_FOR_FIRST_CHATS_COUNT)) {
-            currentChatForChatMessagesComponent.value = chat;
-            await nextTick(() => currentChatForChatMessagesComponent.value = defaultChat());
+            currentChatForMessagesBodyComponent.value = chat;
+            await nextTick(() => currentChatForMessagesBodyComponent.value = defaultChat());
         }
     })
 }
 
 watch(selectedChat, (selectedChat) => {
-    currentChatForChatMessagesComponent.value = selectedChat;
+    currentChatForMessagesBodyComponent.value = selectedChat;
 })
 
-watch(currentChatForChatMessagesComponent, (currentChat) => {
+watch(currentChatForMessagesBodyComponent, (currentChat) => {
     if (!currentChat.id) return;
-    chatMessagesComponents.value[currentChat.id] = MessagesList;
+    messagesBodyComponents.value[currentChat.id] = MessagesBody;
 });
 </script>
 
 <template>
     <div
-        class="rounded-r-xl border border-gray-200 overflow-y-auto overflow-x-hidden"
+        class="rounded-r-xl border border-gray-200 overflow-x-hidden"
         :class="{'bg-white overflow-y-hidden': !selectedChat.id}"
     >
         <div
-            v-show="!selectedChat.id"
+            v-if="!selectedChat.id"
             class="h-full flex justify-center items-center"
         >
             <p class="text-2xl text-gray-400">
                 Выберите чат
             </p>
         </div>
-        <div class="h-full flex flex-col">
+        <div
+            class="h-full flex flex-col"
+            :class="{'invisible': !selectedChat.id}"
+        >
             <MessagesHeader :chat="selectedChat"/>
             <keep-alive :max="10">
                 <component
-                    :is="currentChatMessagesComponent"
-                    :key="currentChatForChatMessagesComponent.id"
-                    :chat="currentChatForChatMessagesComponent"
+                    :is="currentMessagesBodyComponent"
+                    :key="currentChatForMessagesBodyComponent.id"
+                    :chat="currentChatForMessagesBodyComponent"
                 />
             </keep-alive>
-            <MessageInput/>
         </div>
     </div>
 </template>

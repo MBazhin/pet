@@ -15,7 +15,8 @@ defineProps({
 
 <template>
     <div
-        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center transition-colors"
+        tabindex="0"
+        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center transition-colors focus:outline-0 focus:bg-gray-200"
         :class="[
             highlight ? 'bg-gray-200' : 'hover:bg-gray-100',
             { 'animate-pulse hover:bg-inherit !cursor-default': skeleton }

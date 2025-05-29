@@ -28,10 +28,12 @@ onMounted(() => {
             <TransitionGroup>
                 <ChatItem
                     v-for="(chat, index) in chats"
+                    class="shrink-0"
                     :key="index"
                     :chat="chat"
                     :highlight="selectedChat.id === chat.id"
                     @click="selectChat(chat)"
+                    @keyup.enter="selectChat(chat)"
                 />
             </TransitionGroup>
             <ChatItem
