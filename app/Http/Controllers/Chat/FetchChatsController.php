@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Throwable;
 
-class ChatListController extends Controller
+class FetchChatsController extends Controller
 {
     /**
      * @throws Throwable

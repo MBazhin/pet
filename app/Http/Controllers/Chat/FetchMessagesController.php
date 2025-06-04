@@ -17,6 +17,7 @@ class FetchMessagesController extends Controller
         return MessageResource::collection(
             $chat
                 ->messages()
+                ->latest('id')
                 ->cursorPaginate(20)
         );
     }

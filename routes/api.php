@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Chat\ChatListController;
+use App\Http\Controllers\Chat\FetchChatsController;
 use App\Http\Controllers\Chat\FetchMessagesController;
+use App\Http\Controllers\Chat\StoreMessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,11 @@ Route::prefix('chat')
     ->name('chat.')
     ->middleware('auth:sanctum')
     ->group(function () {
-       Route::get('/', ChatListController::class)->name('chat_list');
-       Route::get('/{chat}/messages', FetchMessagesController::class)->name('fetch_messages');
+       Route::get('/', FetchChatsController::class)->name('fetch');
+       Route::prefix('/{chat}/messages')
+           ->name('messages.')
+           ->group(function () {
+               Route::get('/', FetchMessagesController::class)->name('fetch');
+               Route::post('/', StoreMessageController::class)->name('store');
+           });
     });
