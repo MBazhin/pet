@@ -1,8 +1,8 @@
 import {computed, ref} from "vue";
 import {useAxios} from "@vueuse/integrations/useAxios";
 
-export function useInfiniteAxiosViaLaravelCursor(loadDataUrl) {
-    const items = ref([]);
+export function useInfiniteAxiosViaLaravelCursor(loadDataUrl, initialItems = []) {
+    const items = ref(initialItems);
     const next = ref(false);
     const prev = ref(false);
     const initialLoadingCompleted = ref(false);
@@ -13,8 +13,8 @@ export function useInfiniteAxiosViaLaravelCursor(loadDataUrl) {
         execute
     } = useAxios(loadDataUrl, {}, {immediate: false});
 
-    const canLoadMoreForward = computed(() => next.value && !error.value);
-    const canLoadMoreBackward = computed(() => prev.value && !error.value);
+    const canLoadMoreForward = computed(() => !!next.value && !error.value);
+    const canLoadMoreBackward = computed(() => !!prev.value && !error.value);
 
     const loadDataForward = () => loadData();
     const loadDataBackward = () => loadData(false);
@@ -29,7 +29,9 @@ export function useInfiniteAxiosViaLaravelCursor(loadDataUrl) {
 
                 initialLoadingCompleted.value = true;
 
-                items.value = data;
+                items.value.push(...data);
+
+                return data;
             })
 
         if (forward) return execute(next.value)
@@ -38,7 +40,9 @@ export function useInfiniteAxiosViaLaravelCursor(loadDataUrl) {
 
                 next.value = links.next;
 
-                items.value.push(...data)
+                items.value.push(...data);
+
+                return data;
             });
         else return execute(prev.value)
             .then(response => {
@@ -47,6 +51,8 @@ export function useInfiniteAxiosViaLaravelCursor(loadDataUrl) {
                 prev.value = links.prev;
 
                 items.value.unshift(...data);
+
+                return data;
             });
     }
 

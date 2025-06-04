@@ -1,6 +1,7 @@
 import {ref} from "vue";
 import defaultChat from "@/Chat/Composables/Defaults/chat.js";
 import {useInfiniteAxiosViaLaravelCursor} from "@/Chat/Composables/infiniteAxiosViaLaravelCursor.js";
+import {useMessages} from "@/Chat/Composables/messages.js";
 
 const apiUrl = '/api/chat'; //todo заменить на ziggy или wayfinder
 
@@ -11,14 +12,20 @@ const {
     initialLoadingCompleted,
     isLoading: isChatsLoading,
     canLoadMoreForward: canLoadMoreChats,
-    loadDataForward: loadChats,
+    loadDataForward,
 } = useInfiniteAxiosViaLaravelCursor(apiUrl);
 
-const selectChat = (chat) => selectedChat.value = selectedChat.value.id === chat.id
-    ? unselectChat()
-    : chat;
+function loadChats() {
+    return loadDataForward()
+        .then(chats =>
+            chats.forEach(chat => useMessages(chat)));
+}
 
-const unselectChat = () => selectedChat.value = defaultChat();
+function selectChat(chat) {
+    selectedChat.value = selectedChat.value.id === chat.id
+        ? defaultChat()
+        : chat;
+}
 
 export function useChats() {
     return {
@@ -29,6 +36,5 @@ export function useChats() {
         initialLoadingCompleted,
         loadChats,
         selectChat,
-        unselectChat,
     }
 }
