@@ -1,9 +1,10 @@
 <script setup>
 import MessagesHeader from "@/Chat/Messages/MessagesHeader.vue";
 import {useChats} from "@/Chat/Composables/chats.js";
-import {computed, nextTick, ref, shallowRef, watch} from "vue";
+import {computed, ref, shallowRef, watch} from "vue";
 import defaultChat from "@/Chat/Composables/Defaults/chat.js";
 import MessagesBody from "@/Chat/Messages/MessagesBody.vue";
+import {useMessages} from "@/Chat/Composables/messages.js";
 
 const {prefetch} = defineProps({
     prefetch: Boolean,
@@ -11,8 +12,8 @@ const {prefetch} = defineProps({
 
 const {initialLoadingCompleted, chats, selectedChat} = useChats();
 
-const currentChatForMessagesBodyComponent = ref(defaultChat());
 const messagesBodyComponents = shallowRef({});
+const currentChatForMessagesBodyComponent = ref(defaultChat());
 const currentMessagesBodyComponent = computed(() =>
     messagesBodyComponents.value[currentChatForMessagesBodyComponent.value.id]);
 
@@ -21,8 +22,8 @@ if (prefetch) {
 
     watch(initialLoadingCompleted, async () => {
         for (const chat of chats.value.slice(0, PREFETCH_MESSAGES_FOR_FIRST_CHATS_COUNT)) {
-            currentChatForMessagesBodyComponent.value = chat;
-            await nextTick(() => currentChatForMessagesBodyComponent.value = defaultChat());
+            const {loadMessagesForward} = useMessages(chat);
+            loadMessagesForward.value();
         }
     })
 }
@@ -33,6 +34,7 @@ watch(selectedChat, (selectedChat) => {
 
 watch(currentChatForMessagesBodyComponent, (currentChat) => {
     if (!currentChat.id) return;
+
     messagesBodyComponents.value[currentChat.id] = MessagesBody;
 });
 </script>
@@ -52,7 +54,6 @@ watch(currentChatForMessagesBodyComponent, (currentChat) => {
         </div>
         <div
             class="h-full flex flex-col"
-            :class="{'invisible': !selectedChat.id}"
         >
             <MessagesHeader :chat="selectedChat"/>
             <keep-alive :max="10">

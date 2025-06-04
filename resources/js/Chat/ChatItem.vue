@@ -2,24 +2,31 @@
 import Name from "@/Chat/User/Name.vue";
 import CircleAvatar from "@/Chat/User/CircleAvatar.vue";
 import MessageTime from "@/Chat/Messages/MessageTime.vue";
+import {computed} from "vue";
+import {useChatsLastMessages} from "@/Chat/Composables/messages.js";
+import defaultChat from "@/Chat/Composables/Defaults/chat.js";
 
-defineProps({
+const {chat, skeleton} = defineProps({
     chat: {
         type: Object,
-        required: true,
+        default: () => defaultChat(),
     },
     highlight: Boolean,
     skeleton: Boolean
 });
+
+const {chatsLastMessages} = useChatsLastMessages();
+
+const lastMessage = computed(() => chatsLastMessages.value.get(chat.id));
 </script>
 
 <template>
     <div
         tabindex="0"
-        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center transition-colors focus:outline-0 focus:bg-gray-200"
+        class="relative rounded-xl cursor-pointer h-18 p-2 flex gap-3 items-center transition-colors"
         :class="[
             highlight ? 'bg-gray-200' : 'hover:bg-gray-100',
-            { 'animate-pulse hover:bg-inherit !cursor-default': skeleton }
+            skeleton ? 'animate-pulse hover:bg-inherit !cursor-default' : 'focus:outline-0 focus:bg-gray-200'
         ]"
     >
         <div
@@ -41,11 +48,14 @@ defineProps({
             <template v-else>
                 <Name :name="chat.name"/>
 
-                <div v-if="chat.last_message" class="flex justify-between items-baseline">
+                <div
+                    v-if="lastMessage"
+                    class="flex justify-between items-baseline"
+                >
                     <span class="text-gray-700 text-sm break-all line-clamp-1"
-                    >{{ chat.last_message.text }}</span>
+                    >{{ lastMessage.text }}</span>
 
-                    <MessageTime :time="chat.last_message.created_at"/>
+                    <MessageTime :time="lastMessage.created_at"/>
                 </div>
             </template>
         </div>

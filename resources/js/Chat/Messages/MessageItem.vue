@@ -1,6 +1,8 @@
 <script setup>
 import CircleAvatar from "@/Chat/User/CircleAvatar.vue";
 import MessageTime from "@/Chat/Messages/MessageTime.vue";
+import {computed} from "vue";
+import {useMessage} from "@/Chat/Composables/message.js";
 
 const {message} = defineProps({
     message: {
@@ -16,6 +18,18 @@ const {message} = defineProps({
         required: true,
     }
 });
+
+const emit = defineEmits({
+    retryStore: null
+});
+
+const {isErrorState} = useMessage();
+
+const errorState = computed(() => isErrorState(message));
+
+function handleErrorButtonClick() {
+    emit('retryStore');
+}
 </script>
 
 <template>
@@ -30,10 +44,18 @@ const {message} = defineProps({
             :class="{'invisible': !isLastSenderMessage}"
         />
         <div class="p-2 bg-white border-gray-300 rounded-lg cursor-default">
-            <div class="flex justify-between items-end">
-                <span>{{ message.text }}</span>
+            <div class="flex justify-between items-end gap-1">
+                <span class="whitespace-break-spaces">{{ message.text }}</span>
 
-                <MessageTime :time="message.created_at"/>
+                <div class="flex flex-col items-end gap-1">
+                    <button
+                        v-if="errorState"
+                        title="Повторить"
+                        class="bg-red-500 rounded-full size-3.5 cursor-pointer"
+                        @click="handleErrorButtonClick"
+                    />
+                    <MessageTime :time="message.created_at"/>
+                </div>
             </div>
         </div>
     </div>

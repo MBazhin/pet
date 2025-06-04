@@ -15,7 +15,7 @@ onActivated(() => {
 })
 
 function handleMessageSubmit() {
-    emit('submit');
+    emit('submit', textarea);
 }
 </script>
 

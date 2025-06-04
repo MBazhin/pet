@@ -2,15 +2,25 @@
 import ChatItem from "@/Chat/ChatItem.vue";
 import {vInfiniteScroll} from "@/Chat/Composables/infiniteScroll.js";
 import {useChats} from "@/Chat/Composables/chats.js";
-import {onMounted} from "vue";
+import {computed, onMounted} from "vue";
+import {useChatsLastMessages} from "@/Chat/Composables/messages.js";
 
 const {
     chats, selectedChat, initialLoadingCompleted, canLoadMoreChats, isChatsLoading, loadChats, selectChat
 } = useChats();
 
-onMounted(() => {
-    loadChats();
+const {chatsLastMessages} = useChatsLastMessages();
+
+const sortedChatsByLastMessage = computed(() => {
+    return chats.value.toSorted((c1, c2) => {
+        const lastMessage1 = chatsLastMessages.value.get(c1.id);
+        const lastMessage2 = chatsLastMessages.value.get(c2.id);
+
+        return new Date(lastMessage2?.created_at).getTime() - new Date(lastMessage1?.created_at).getTime();
+    });
 });
+
+onMounted(loadChats);
 </script>
 
 <template>
@@ -27,7 +37,7 @@ onMounted(() => {
         <template v-if="initialLoadingCompleted">
             <TransitionGroup>
                 <ChatItem
-                    v-for="(chat, index) in chats"
+                    v-for="(chat, index) in sortedChatsByLastMessage"
                     class="shrink-0"
                     :key="index"
                     :chat="chat"
@@ -39,14 +49,12 @@ onMounted(() => {
             <ChatItem
                 v-if="isChatsLoading"
                 skeleton
-                :chat="{}"
             />
         </template>
         <template v-else>
             <ChatItem
                 v-for="n in 15" :key="n"
                 skeleton
-                :chat="{}"
             />
         </template>
     </div>
